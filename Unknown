@@ -1,0 +1,848 @@
+A. Create a simple calculator application using servlet 
+➔  
+CODE:- 
+ 
+ index.html 
+<html> 
+<head> 
+<title>Calculator App</title> 
+</head> 
+<body> 
+<form action="CalculatorServlet" > 
+Enter First Number <input type="text" name="txtN1" ><br>  
+Enter Second Number <input type="text" name="txtN2" ><br>  
+Select an Operation 
+<input type="radio" name="opr" value="+">ADDTION 
+<input type="radio" name="opr" value="-">SUBSTRACTION 
+<input type="radio" name="opr" value="*">MULTIPLY 
+<input type="radio" name="opr" value="/">DIVIDE <br> 
+<input type="reset"> 
+<input type="submit" value="Calculate" > 
+</form> 
+</body> 
+</html> 
+ 
+CalculatorServlet.java 
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException; 
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+public class CalculatorServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet CalculatorServlet</title></head><body>");  
+double n1 = Double.parseDouble(request.getParameter("txtN1")); 
+double n2 = Double.parseDouble(request.getParameter("txtN2"));  
+double result =0; 
+String opr=request.getParameter("opr"); 
+if(opr.equals("+")) result=n1+n2;   
+if(opr.equals("-")) result=n1-n2;  
+if(opr.equals("*")) result=n1*n2;    
+if(opr.equals("/")) result=n1/n2;  
+out.println("<h1> Result = "+result);  
+out.println("</body></html>"); 
+  } 
+}
+
+
+B . Create a servlet for a login page. If the username and password are correct then it says message 
+“Hello <username>” else a message “login failed” 
+➔ 
+CODE: 
+index.html 
+<html> 
+<head> 
+<title>Login Form</title> 
+</head> 
+<form action="LoginServlet" > 
+Enter User ID<input type="text" name="txtId"><br> 
+Enter Password<input type="password" name="txtPass"><br> 
+<input type="reset"> 
+<input type="submit" value=" Click to Login " > 
+</form> 
+</html> 
+ 
+LoginServlet.java   
+import java.io.*; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.*; 
+public class LoginServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet LoginServlet</title></head>");  
+String uname = request.getParameter("txtId"); 
+String upass = request.getParameter("txtPass"); 
+if(uname.equals("admin") && upass.equals("12345")){  
+out.println("<body bgcolor=blue >"); 
+out.println("<h1> Welcome !!! "+uname+"</h1>"); 
+} 
+else{ 
+out.println("<body bgcolor=red >"); 
+out.println("<h1> Login Fail !!! </h1>"); 
+} 
+out.println("</body></html>"); 
+} 
+} 
+
+C . Create a registration servlet in Java using JDBC. Accept the details such as Username, Password, Email, 
+and Country from the user using HTML Form and store the registration details in the database. 
+➔ 
+CODE: 
+MySql queries 
+create database LoginDB;  
+use LoginDB; 
+create table user(username varchar(20) PRIMARY KEY, password varchar(20), email varchar(20), country 
+varchar(20)); 
+insert into user values ('admin','admin','admin@admin.com','India');  
+select * from user; 
+ 
+index.html 
+<html> 
+<head> 
+<title>Registration Page</title> 
+</head> 
+<body> 
+<form action="RegisterServlet" > 
+<H1>Welcome to Registration page</H1> 
+Enter User Name  <input type="text" name="txtUid"><br>  
+Enter Password   <input type="password" name="txtPass"><br>  
+Enter Email  <input type="text" name="txtEmail" ><br> 
+Enter Country  <input type="text" name="txtCon" ><br> 
+<input type="reset" > 
+<input type="submit" value="REGISTER" > 
+</form> 
+</body> 
+</html> 
+ 
+RegisterServlet.java  
+import java.io.*;  
+import java.sql.*;  
+import javax.servlet.*; 
+import javax.servlet.http.*; 
+ 
+public class RegisterServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+String id = request.getParameter("txtUid");  
+String ps = request.getParameter("txtPass");  
+String em = request.getParameter("txtEmail");  
+String co = request.getParameter("txtCon");  
+try{ 
+  Class.forName("com.mysql.jdbc.Driver"); 
+Connection con=DriverManager.getConnection("jdbc:mysql://localhost/logindb",”root”,””);  
+PreparedStatement pst = con.prepareStatement("insert into user values(?,?,?,?)");  
+pst.setString(1,id); 
+pst.setString(2,ps);  
+pst.setString(3,em);  
+pst.setString(4,co); 
+int row = pst.executeUpdate();  
+ 
+ 
+ 
+ 
+out.println("<h1>"+row+ " Inserted Succesfullyyyyy"); 
+} 
+catch(Exception e){ 
+out.println(e); 
+} 
+} 
+
+ 
+D . Using Request Dispatcher Interface create a Servlet which will validate the password entered by the 
+user, if the user has entered "Servlet" as password, then he will be forwarded to Welcome Servlet else 
+the user will stay on the index.html page and an error message will be displayed. 
+➔ 
+CODE: 
+index.html 
+<html> 
+<head> 
+<title>Login Form</title> 
+</head> 
+<form action="LoginServlet" > 
+Enter User ID<input type="text" name="txtId"><br> 
+Enter Password<input type="password" name="txtPass"><br> 
+<input type="reset"> 
+<input type="submit" value=" Click to Login " > 
+</form> 
+</html>  
+LoginServlet.java  
+import java.io.IOException; 
+ import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.RequestDispatcher; 
+public class LoginServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head>"); 
+out.println("<title>Servlet LoginServlet</title></head>");  
+String uname = request.getParameter("txtId"); 
+String upass = request.getParameter("txtPass");  
+if(uname.equals("admin") && upass.equals("servlet")){ 
+RequestDispatcher rd = request.getRequestDispatcher("WelcomeServlet");  
+rd.forward(request, response); 
+} 
+else{ 
+out.println("<body bgcolor=red >");  
+out.println("<h1> Login Fail !!! </h1>"); 
+RequestDispatcher rd = request.getRequestDispatcher("index.html");  
+rd.include(request, response); 
+} 
+out.println("</body>");  
+out.println("</html>");  
+  } 
+}
+ 
+ 
+ 
+ 
+WelcomeServlet.java 
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.RequestDispatcher; 
+public class LoginServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head>"); 
+out.println("<title>Servlet LoginServlet</title></head>");  
+String uname = request.getParameter("txtId"); 
+String upass = request.getParameter("txtPass");  
+if(uname.equals("admin") && upass.equals("servlet")){ 
+RequestDispatcher rd = request.getRequestDispatcher("WelcomeServlet");  
+rd.forward(request, response); 
+} 
+else{ 
+out.println("<body bgcolor=red >");  
+out.println("<h1> Login Fail !!! </h1>"); 
+RequestDispatcher rd = request.getRequestDispatcher("index.html");  
+rd.include(request, response); 
+} 
+out.println("</body>");  
+out.println("</html>"); 
+ }  } 
+
+E. Create a servlet that uses Cookies to store the number of times a user has visited servlet. 
+➔ 
+CODE: 
+index.html 
+<html> 
+<head> 
+<title>Cookie Demo</title> 
+</head> 
+<body> 
+<form action="Page1" > 
+Enter Your Name <input type="text" name="txtName"><br> 
+<input type="submit" value="~~~ Click to Enter ~~~"> 
+</form> 
+</body> 
+</html> 
+  
+Page1.java  
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.Cookie; 
+public class Page1 extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Page1</title></head>");  
+out.println("<body bgcolor=pink >"); 
+String uname = request.getParameter("txtName");  
+out.println("<h1>~~~ Welcome "+uname+"</h1>");  
+Cookie ck1 = new Cookie("username", uname);  
+Cookie ck2 = new Cookie("visit","1");  
+response.addCookie(ck1);  
+response.addCookie(ck2); 
+out.println("<h1><a href=Page2 >Click to visit Page 2 </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page2.java 
+import java.io.*; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.*; 
+public class Page2 extends HttpServlet { 
+ 
+ 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Page2</title></head>");  
+out.println("<body bgcolor=yellow >"); 
+Cookie [] ck = request.getCookies();  
+for(int i=0;i<ck.length;i++){ 
+ if(ck[i].getName().equals("visit")){ 
+   int count = Integer.parseInt(ck[i].getValue())+1;  
+    out.println("<h1>Visit No : "+count+"</h1>");  
+     ck[i] = new Cookie("visit",count+"");  
+       response.addCookie(ck[i]); 
+} 
+else { 
+out.prin
+ tln(ck[i
+ ].getNa
+ me()+ " 
+= 
+"+ck[i].
+ getValue());  
+}  
+out.println("<h1><a href=Page3 >Click to visit Page 3 </a></h1>");  
+out.println("<h1><a href=Page4 >Click to visit Page 4 </a></h1>");  
+out.println("<h1><a href=Page5 >Click to visit Page 5 </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+ } 
+ 
+Page3.java 
+import java.io.*; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.*; 
+public class Page3 extends HttpServlet { 
+ 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Page2</title></head>");  
+out.println("<body bgcolor=yellow >"); 
+Cookie [] ck = request.getCookies();  
+for(int i=0;i<ck.length;i++){  
+  if(ck[i].getName().equals("visit")){ 
+   int count = Integer.parseInt(ck[i].getValue())+1;  
+    out.println("<h1>Visit No : "+count+"</h1>");  
+      ck[i] = new Cookie("visit",count+"");  
+       response.addCookie(ck[i]); 
+} 
+else { 
+out.println(ck[i].getName()+ " = "+ck[i].getValue()); 
+ }  
+out.println("<h1><a href=Page2 >Click to visit Page 2 </a></h1>");  
+out.println("<h1><a href=Page4 >Click to visit Page 4 </a></h1>");  
+out.println("<h1><a href=Page5 >Click to visit Page 5 </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page4.java  
+ 
+ 
+import java.io.*; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.*; 
+public class Page4 extends HttpServlet { 
+ 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Page2</title></head>");  
+out.println("<body bgcolor=yellow >"); 
+Cookie [] ck = request.getCookies();  
+for(int i=0;i<ck.length;i++){  
+ if(ck[i].getName().equals("visit")){ 
+  int count = Integer.parseInt(ck[i].getValue())+1;  
+out.println("<h1>Visit No : "+count+"</h1>"); ck[i] = new Cookie("visit",count+"");  
+response.addCookie(ck[i]); 
+} 
+else { 
+out.println(ck[i].getName()+ " = "+ck[i].getValue()); 
+ }  
+out.println("<h1><a href=Page2>Click to visit Page 2 </a></h1>");  
+out.println("<h1><a href=Page3 >Click to visit Page 3 </a></h1>");  
+out.println("<h1><a href=Page5 >Click to visit Page 5 </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page5.java  
+import java.io.*; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.*; 
+public class Page5 extends HttpServlet { 
+ 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Page2</title></head>");  
+out.println("<body bgcolor=yellow >"); 
+Cookie [] ck = request.getCookies();  
+for(int i=0;i<ck.length;i++){  
+if(ck[i].getName().equals("visit")){ 
+int count = Integer.parseInt(ck[i].getValue())+1;  
+out.println("<h1>Visit No : "+count+"</h1>");  
+ck[i] = new Cookie("visit",count+"");  
+response.addCookie(ck[i]); 
+} 
+else { 
+out.println(ck[i].getName()+ " = "+ck[i].getValue()); 
+ }  
+out.println("<h1><a href=Page2>Click to visit Page 2 </a></h1>");  
+out.println("<h1><a href=Page3 >Click to visit Page 3 </a></h1>");  
+out.println("<h1><a href=Page4 >Click to visit Page 4 </a></h1>");  
+out.println("</body>"); 
+ 
+ 
+out.println("</html>"); 
+} 
+} 
+
+F. Create a servlet demonstrating the use of session creation and destruction. Also check whether the user 
+has visited this page first time or has visited earlier also using sessions. 
+➔ 
+CODE: 
+index.html 
+<html> 
+<head> 
+<title>Session Demo</title> 
+</head> 
+<form action="Page1" method="get" > 
+Enter User ID <input type="text" name="txtName"><br> 
+<input type="reset" > 
+<input type="submit" > 
+</form> 
+</html>  
+Page1.java  
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpSession; 
+public class Page1 extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet Page1</title></head>"); 
+HttpSession hs = request.getSession(true);  
+if(hs.isNew()){ 
+out.println("<body bgcolor=yellow>"); 
+String name = request.getParameter("txtName");  
+hs.setAttribute("uname", name);  
+hs.setAttribute("visit", "1"); 
+out.println("<h1>Welcome First Time</h1>"); 
+} 
+else{ 
+out.println("<h1>Welcome Again</h1>"); 
+int visit = Integer.parseInt((String)hs.getAttribute("visit"))+1;  
+out.println("<h1>You Visited "+visit+"Times</h1>");  
+hs.setAttribute("visit", ""+visit); 
+} 
+out.println("<h1>Your Session ID "+hs.getId()+"</h1>"); 
+out.println("<h1>You Logged in at "+new java.util.Date(hs.getCreationTime())+"</h1>");  
+out.println("<h1><a href=Page2>Click for Page 2 </a></h1>"); 
+out.println("<h1><a href=Page3>Click for Page 3 </a></h1>"); 
+ 
+ 
+out.println("<h1><a href=Page4>Click for Page 4 </a></h1>");  
+out.println("<h1><a href=LogoutServlet>Click to Terminate Session </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page2.java 
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpSession; 
+public class Page2 extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet Page2</title></head>"); 
+ 
+HttpSession hs = request.getSession(false);  
+out.println("<h1>Welcome Again on Page No. 2</h1>"); 
+int visit = Integer.parseInt((String)hs.getAttribute("visit"))+1;  
+out.println("<h1>You Visited "+visit+"Times</h1>");  
+hs.setAttribute("visit", ""+visit); 
+ 
+out.println("<h1>Your Session ID "+hs.getId()+"</h1>"); 
+out.println("<h1>You Logged in at "+new java.util.Date(hs.getCreationTime())+"</h1>");  
+out.println("<h1><a href=Page1>Click for Page 1 </a></h1>"); 
+out.println("<h1><a href=Page3>Click for Page 3 </a></h1>");  
+out.println("<h1><a href=Page4>Click for Page 4 </a></h1>");  
+out.println("<h1><a href=LogoutServlet>Click for Terminate Session </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page3.java 
+import java.io.IOException; 
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpSession; 
+ 
+public class Page3 extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet Page2</title></head>"); 
+ 
+HttpSession hs = request.getSession(false); out.println("<h1>Welcome Again on Page No. 2</h1>"); 
+ 
+ 
+int visit = Integer.parseInt((String)hs.getAttribute("visit"))+1; out.println("<h1>You Visited 
+"+visit+"Times</h1>"); hs.setAttribute("visit", ""+visit); 
+out.println("<h1>Your Session ID "+hs.getId()+"</h1>"); 
+out.println("<h1>You Logged in at "+new java.util.Date(hs.getCreationTime())+"</h1>");  
+out.println("<h1><a href=Page1>Click for Page 1 </a></h1>"); 
+out.println("<h1><a href=Page2>Click for Page 2 </a></h1>");  
+out.println("<h1><a href=Page4>Click for Page 4 </a></h1>");  
+out.println("<h1><a href=LogoutServlet>Click for Terminate Session </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+Page4.java 
+import java.io.IOException; 
+import java.io.PrintWriter; 
+import javax.servlet.ServletException;  
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+import javax.servlet.http.HttpSession; 
+ 
+public class Page4 extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet Page2</title></head>"); 
+ 
+HttpSession hs = request.getSession(false);  
+out.println("<h1>Welcome Again on Page No. 2</h1>"); 
+int visit = Integer.parseInt((String)hs.getAttribute("visit"))+1;  
+out.println("<h1>You Visited "+visit+"Times</h1>");  
+hs.setAttribute("visit", ""+visit); 
+ 
+out.println("<h1>Your Session ID "+hs.getId()+"</h1>"); 
+out.println("<h1>You Logged in at "+new java.util.Date(hs.getCreationTime())+"</h1>");  
+out.println("<h1><a href=Page1>Click for Page 1 </a></h1>"); 
+out.println("<h1><a href=Page2>Click for Page 2 </a></h1>");  
+out.println("<h1><a href=Page3>Click for Page 3 </a></h1>");  
+out.println("<h1><a href=LogoutServlet>Click for Terminate Session </a></h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+ 
+LogoutServlet.java 
+import java.io.IOException;  
+import java.io.PrintWriter; 
+import javax.servlet.ServletException; 
+import javax.servlet.http.HttpServlet; 
+import javax.servlet.http.HttpServletRequest;  
+import javax.servlet.http.HttpServletResponse;  
+public class LogoutServlet extends HttpServlet { 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+ 
+ 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+out.println("<html><head><title>Servlet LogoutServlet</title></head>");  
+out.println("<body>"); 
+javax.servlet.http.HttpSession hs = request.getSession();  
+if(hs != null) hs.invalidate(); 
+out.println("<h1>You are Logged out now........</h1>");  
+out.println("</body>"); 
+out.println("</html>"); 
+} 
+} 
+
+G.  
+A. Develop a simple JSP application to display values obtained from the use of intrinsic objects of 
+various types. 
+CODE: 
+<%@page contentType="text/html" pageEncoding="UTF-8"%> 
+<html> 
+<head> 
+<title>JSP Page</title> 
+</head> 
+<body> 
+<h1>Use of Intrinsic Objects in JSP</h1> 
+<h1>Request Object </h1> 
+Query String <%=request.getQueryString() %><br>  
+Context Path <%=request.getContextPath() %><br>  
+Remote Host <%=request.getRemoteHost() %><br> 
+<h1>Response Object </h1> 
+Character Encoding Type <%=response.getCharacterEncoding() %><br>  
+Content Type <%=response.getContentType() %><br> 
+Locale <%=response.getLocale() %><br> 
+<h1>Session Object </h1> 
+ID <%=session.getId() %><br> 
+Creation Time <%=new java.util.Date(session.getCreationTime()) %><br> 
+Last Access Time<%=new java.util.Date(session.getLastAccessedTime()) %><br> 
+</body> 
+</html> 
+
+H. . Develop a simple JSP application to pass values from one page to another with validations. (Name
+txt, age-txt, hobbies-checkbox, email-txt, gender-radio button). 
+ 
+CODE: 
+index.html 
+<html> 
+<head> 
+<title>User Information Page</title> 
+</head> 
+<body> 
+<form action="Validate.jsp"> 
+Enter Your Name<input type="text" name="name" ><br>  
+Enter Your Age<input type="text" name="age" ><br>  
+Select Hobbies 
+<input type="checkbox" name="hob" value="Singing">Singing 
+<input type="checkbox" name="hob" value="Reading">Reading Books 
+<input type="checkbox" name="hob" value="Football">Playing Football<br>  
+Enter E-mail<input type="text" name="email" ><br> 
+Select Gender 
+<input type="radio" name="gender" value="male">Male 
+<input type="radio" name="gender" value="female">Female 
+<input type="radio" name="gender" value="other">Other<br> 
+<input type="hidden" name="error" value=""> 
+<input type="submit" value="Submit Form"> 
+</form> 
+</body> 
+</html> 
+ 
+ 
+Validate.jsp 
+<%@page contentType="text/html" pageEncoding="UTF-8" import="mypack.*" %> 
+<html> 
+<head> 
+<title>JSP Page</title> 
+</head> 
+<body> 
+<h1>Validation Page</h1> 
+ 
+<jsp:useBean id="obj" scope="request" class="mypack.CheckerBean" > 
+<jsp:setProperty name="obj" property="*"/> 
+</jsp:useBean> 
+ 
+<%if (obj.validate()) 
+{ %> 
+<jsp:forward page="successful.jsp"/> 
+<% } 
+else {%> 
+<jsp:include page="index.html"/> 
+<%}%> 
+<%=obj.getError() %> 
+</body> 
+</html> 
+ 
+ 
+CheckerBean.java 
+package mypack; 
+ 
+public class CheckerBean { 
+private String name, age, hob, email, gender, error;  
+public CheckerBean(){error="";} 
+public void setName(String n){name=n; 
+}  
+public void setAge(String a){ 
+ age=a; 
+}  
+public void setHob(String h){ 
+  hob=h; 
+} 
+public void setEmail(String e){ 
+  email=e; 
+}  
+public void setGender(String g){ 
+  gender=g; 
+}  
+public void setError(String e){ 
+  error=e; 
+}  
+public String getName(){ 
+  return name; 
+}  
+public String getAge(){ 
+  return age; 
+} 
+public String getHob(){ 
+  return hob; 
+}  
+public String getEmail(){ 
+  return email; 
+}  
+public String getGender(){ 
+  return gender; 
+}  
+public String getError(){ 
+  return error; 
+}  
+public boolean validate(){ 
+boolean res=true; 
+if(name.trim().equals("")) { 
+  error+="<br>Enter First Name";res=false; 
+} 
+ if(age.length() > 2 ) 
+{ 
+   error+="<br>Age Invalid";res=false; 
+} 
+ 
+return res; 
+} 
+} 
+
+
+I. Create a Currency Converter application using EJB. 
+➔ 
+CODE: 
+index.html  
+<html> 
+<head> 
+<title>Currency Converter</title> 
+</head> 
+<body> 
+<form action="CCServlet" > 
+Enter Amount <input type="text" name="amt"><br>  
+Select Conversion Type 
+<input type="radio" name="type" value="r2d" checked>Rupees to Dollar 
+<input type="radio" name="type" value="d2r" >Dollor to Rupees<br> 
+<input type="reset" > 
+<input type="submit" value="CONVERT" > 
+</form> 
+</body> 
+</html> 
+CCServlet.java  
+package mypack;  
+import java.io.*;  
+import javax.servlet.*; 
+import javax.servlet.http.*;  
+import javax.ejb.EJB;  
+import mybeans.CCBean; 
+public class CCServlet extends HttpServlet {  
+@EJB CCBean obj; 
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+IOException { 
+response.setContentType("text/html;charset=UTF-8");  
+PrintWriter out = response.getWriter(); 
+double amt = Double.parseDouble(request.getParameter("amt"));  
+if(request.getParameter("type").equals("r2d")) 
+{ 
+out.println("<h1>"+amt+ " Rupees = "+obj.r2Dollor(amt)+" Dollors</h1>"); 
+} 
+if(request.getParameter("type").equals("d2r")) 
+{ 
+out.println("<h1>"+amt+ " Dollors = "+obj.d2Rupees(amt)+" Rupees</h1>"); 
+} 
+ 
+} 
+} 
+CCBean  
+package mybeans; 
+import javax.ejb.Stateless;  
+@Stateless 
+public class CCBean {  
+public CCBean(){} 
+public double r2Dollor(double r){ 
+  return r/65.65; 
+ }  
+public double d2Rupees(double d){  
+ 
+ 
+  return d*65.65; 
+ } 
+} 
+
+J. Develop simple EJB application to demonstrate Servlet Hit count using Singleton Session Beans. 
+➔ 
+CODE: 
+CounterBean.java  
+package counter.ejb;  
+import javax.ejb.Singleton; 
+ 
+@Singleton 
+public class CounterBean {  
+private int hits = 1; 
+public int getHits() { 
+return hits++; 
+} 
+} 
+ 
+Count.java  
+package mypack; 
+import java.io.Serializable;  
+import javax.ejb.EJB; 
+import javax.enterprise.context.ConversationScoped;  
+import javax.inject.Named; 
+import counter.ejb.CounterBean;  
+@Named("count")  
+@ConversationScoped 
+public class Count implements Serializable {  
+ @EJB 
+private CounterBean counterBean;  
+private int hitCount; 
+public Count() {  
+  this.hitCount = 0; 
+ 
+       } 
+public int getHitCount() { 
+ hitCount = counterBean.getHits(); 
+ return hitCount; 
+} 
+ 
+public void setHitCount(int newHits) { 
+ this.hitCount = newHits; 
+} 
+} 
+ 
+HitCountPage.xhtml  
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"> 
+<h:head> 
+<title>Page Hit Counter Using Singleton Session Bean ~~~~ </title> 
+</h:head> 
+<h:body> 
+<h1>Welcome to Hit Count Page</h1> Page was hit #{count.hitCount} times 
+</h:body> 
+</html>
+
+
+
